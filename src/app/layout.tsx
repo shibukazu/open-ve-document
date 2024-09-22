@@ -25,7 +25,12 @@ export default function RootLayout({
         <html className={noto_sans_jp.className}>
             <body>
                 <Header />
-                <main className='flex justify-center items-start h-screen'>{children}</main>
+                <main
+                    className='flex justify-center items-start p-4'
+                    style={{ height: 'calc(100vh - 64px)' }}
+                >
+                    {children}
+                </main>
             </body>
         </html>
     );

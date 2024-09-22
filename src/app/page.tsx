@@ -1,4 +1,3 @@
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@radix-ui/react-tabs';
 import { FaGithub } from 'react-icons/fa';
 
 import {
@@ -9,6 +8,7 @@ import {
 } from '@/components/open-ve-document/typography';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 export default function Home() {
     return (
@@ -17,10 +17,13 @@ export default function Home() {
                 <div className='flex justify-center items-center flex-col gap-4 min-h-96'>
                     <TypographyH1>Open-VE</TypographyH1>
                     <TypographyH3>Centralized and Consistent Data Validation Engine</TypographyH3>
-                    <Button>
-                        <FaGithub className='mr-2' />
-                        Join Development
-                    </Button>
+                    <div className='flex flex-row justify-between items-center gap-4'>
+                        <Button>🛝 Playground</Button>
+                        <Button>
+                            <FaGithub className='mr-2' />
+                            Join Development
+                        </Button>
+                    </div>
                 </div>
                 <div className='flex justify-center items-center flex-col gap-4 w-full'>
                     <div className='flex flex-col w-full gap-2'>

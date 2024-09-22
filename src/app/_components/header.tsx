@@ -8,13 +8,16 @@ import { Button } from '@/components/ui/button';
 export const Header = () => {
     return (
         <header className='bg-primary flex justify-between items-center w-full h-12 py-8'>
-            <div className='flex justify-start items-center gap-4 ml-2'>
+            <div className='flex justify-start items-center gap-2 ml-2'>
                 <TypographyH3 className='text-primary-foreground'>Open-VE</TypographyH3>
             </div>
 
             <nav className='flex justify-end items-center gap-1 mr-4 flex-row'>
                 <Button variant='link' className='text-primary-foreground'>
                     <Link href='/'>Home</Link>
+                </Button>
+                <Button variant='link' className='text-primary-foreground'>
+                    <Link href='/playground'>Playground</Link>
                 </Button>
                 <Button variant='link' className='text-primary-foreground'>
                     <Link href='/docs'>Docs</Link>

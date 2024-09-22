@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import Link from 'next/link';
 
 export default function Home() {
     return (
@@ -18,11 +19,16 @@ export default function Home() {
                     <TypographyH1>Open-VE</TypographyH1>
                     <TypographyH3>Centralized and Consistent Data Validation Engine</TypographyH3>
                     <div className='flex flex-row justify-between items-center gap-4'>
-                        <Button>🛝 Playground</Button>
-                        <Button>
-                            <FaGithub className='mr-2' />
-                            Join Development
-                        </Button>
+                        <Link href='/playground'>
+                            <Button>🛝 Playground</Button>
+                        </Link>
+
+                        <Link href='https://github.com/shibukazu/open-ve' target='_blank'>
+                            <Button>
+                                <FaGithub className='mr-2' />
+                                Join Development
+                            </Button>
+                        </Link>
                     </div>
                 </div>
                 <div className='flex justify-center items-center flex-col gap-4 w-full'>

@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 
 import './globals.css';
 import { Header } from '@/app/_components/header';
+import { Toaster } from '@/components/ui/toaster';
 
 const noto_sans_jp = Noto_Sans_JP({
     weight: ['400', '700'],
@@ -30,6 +31,7 @@ export default function RootLayout({
                     style={{ height: 'calc(100vh - 64px)' }}
                 >
                     {children}
+                    <Toaster />
                 </main>
             </body>
         </html>

@@ -107,15 +107,19 @@ const defaultDSL = JSON.stringify(
         validations: [
             {
                 id: 'user',
-                cels: ['size(name) < 20'],
+                cels: ['age >= 20', 'size(name) < 20', 'size(picture) < 360'],
                 variables: [
                     {
                         name: 'name',
                         type: 'string',
                     },
                     {
-                        name: 'user',
-                        type: 'string',
+                        name: 'age',
+                        type: 'int',
+                    },
+                    {
+                        name: 'picture',
+                        type: 'bytes',
                     },
                 ],
             },

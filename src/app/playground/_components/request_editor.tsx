@@ -16,18 +16,44 @@ import {
     SelectLabel,
     SelectItem,
 } from '@/components/ui/select';
-import { ValidationRequest, ValidationResponse } from '@/app/playground/_types/validation';
+import {
+    validateValidationRequest,
+    ValidationRequest,
+    ValidationResponse,
+} from '@/app/playground/_types/validation';
+import { toast } from '@/hooks/use-toast';
 
 type Props = {
     validationResponse?: ValidationResponse;
     setValidationResponse: (response: ValidationResponse) => void;
 };
 
-export const RequestEditor = ({ validationResponse }: Props) => {
+export const RequestEditor = ({ validationResponse, setValidationResponse }: Props) => {
     const [request, setRequest] = useState<ValidationRequest>({ validations: [] });
 
-    const onClickSend = () => {
-        console.log(request);
+    const onClickSend = async () => {
+        if (!validateValidationRequest(request)) {
+            toast({
+                variant: 'destructive',
+                title: 'Invalid Request',
+                description: 'Please fill out all required fields.',
+            });
+        } else {
+            try {
+                const response = await validate(request);
+                setValidationResponse(response);
+                toast({
+                    title: 'Request Sent',
+                    description: 'Validation request has been sent successfully.',
+                });
+            } catch (e) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Failed to validate',
+                    description: 'There was a problem with your request. Try again later.',
+                });
+            }
+        }
     };
     return (
         <div className='flex flex-col gap-2 w-full h-full'>
@@ -105,11 +131,31 @@ export const RequestEditor = ({ validationResponse }: Props) => {
                                         <Input
                                             type='file'
                                             onChange={(e) => {
-                                                const newValidations = request.validations.slice();
-                                                newValidations[index].variables[
-                                                    variableIndex
-                                                ].value = e.target.value;
-                                                setRequest({ validations: newValidations });
+                                                const file = e.target.files?.[0];
+                                                if (!file) {
+                                                    return;
+                                                }
+
+                                                const reader = new FileReader();
+                                                reader.onload = async (event) => {
+                                                    if (event.target?.result) {
+                                                        const base64String = btoa(
+                                                            String.fromCharCode(
+                                                                ...new Uint8Array(
+                                                                    event.target
+                                                                        .result as ArrayBuffer,
+                                                                ),
+                                                            ),
+                                                        );
+                                                        const newValidations =
+                                                            request.validations.slice();
+                                                        newValidations[index].variables[
+                                                            variableIndex
+                                                        ].value = base64String;
+                                                        setRequest({ validations: newValidations });
+                                                    }
+                                                };
+                                                reader.readAsArrayBuffer(file);
                                             }}
                                             required
                                         />
@@ -182,4 +228,33 @@ export const RequestEditor = ({ validationResponse }: Props) => {
             </Button>
         </div>
     );
+};
+
+const validate = async (request: ValidationRequest) => {
+    if (!process.env.NEXT_PUBLIC_API_URL) {
+        throw new Error('API URL is not defined');
+    }
+    const _request = {
+        validations: request.validations.map((validation) => ({
+            id: validation.id,
+            variables: validation.variables.reduce(
+                (acc, variable) => {
+                    acc[variable.name] = variable.value;
+                    return acc;
+                },
+                {} as Record<string, string>,
+            ),
+        })),
+    };
+    const url = new URL('v1/check', process.env.NEXT_PUBLIC_API_URL);
+    const response = await fetch(url.toString(), {
+        method: 'POST',
+        body: JSON.stringify(_request),
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to validate');
+    }
+
+    return response.json();
 };

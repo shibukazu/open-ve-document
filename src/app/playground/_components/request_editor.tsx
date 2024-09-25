@@ -2,6 +2,12 @@
 
 import { useState } from 'react';
 
+import { getAPIURL, OpenVEMode } from '@/app/_utils/environment';
+import {
+    validateValidationRequest,
+    ValidationRequest,
+    ValidationResponse,
+} from '@/app/playground/_types/validation';
 import { TypographyH3, TypographyLarge } from '@/components/open-ve-document/typography';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,19 +22,15 @@ import {
     SelectLabel,
     SelectItem,
 } from '@/components/ui/select';
-import {
-    validateValidationRequest,
-    ValidationRequest,
-    ValidationResponse,
-} from '@/app/playground/_types/validation';
 import { toast } from '@/hooks/use-toast';
 
 type Props = {
     validationResponse?: ValidationResponse;
     setValidationResponse: (response: ValidationResponse) => void;
+    mode: OpenVEMode;
 };
 
-export const RequestEditor = ({ validationResponse, setValidationResponse }: Props) => {
+export const RequestEditor = ({ validationResponse, setValidationResponse, mode }: Props) => {
     const [request, setRequest] = useState<ValidationRequest>({ validations: [] });
 
     const onClickSend = async () => {
@@ -40,7 +42,7 @@ export const RequestEditor = ({ validationResponse, setValidationResponse }: Pro
             });
         } else {
             try {
-                const response = await validate(request);
+                const response = await validate(mode, request);
                 setValidationResponse(response);
                 toast({
                     title: 'Request Sent',
@@ -230,10 +232,7 @@ export const RequestEditor = ({ validationResponse, setValidationResponse }: Pro
     );
 };
 
-const validate = async (request: ValidationRequest) => {
-    if (!process.env.NEXT_PUBLIC_API_URL) {
-        throw new Error('API URL is not defined');
-    }
+const validate = async (mode: OpenVEMode, request: ValidationRequest) => {
     const _request = {
         validations: request.validations.map((validation) => ({
             id: validation.id,
@@ -246,7 +245,7 @@ const validate = async (request: ValidationRequest) => {
             ),
         })),
     };
-    const url = new URL('v1/check', process.env.NEXT_PUBLIC_API_URL);
+    const url = new URL('v1/check', getAPIURL(mode));
     const response = await fetch(url.toString(), {
         method: 'POST',
         body: JSON.stringify(_request),

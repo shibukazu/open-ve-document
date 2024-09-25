@@ -1,12 +1,18 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
+import { getAPIURL, OpenVEMode } from '@/app/_utils/environment';
 import { TypographyH3, TypographyMedium } from '@/components/open-ve-document/typography';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { useEffect, useState } from 'react';
 
-export const DSLEditor = () => {
+type Props = {
+    mode: OpenVEMode;
+};
+
+export const DSLEditor = ({ mode }: Props) => {
     const { toast } = useToast();
     const [dsl, setDSL] = useState<string | undefined>(undefined);
 
@@ -15,7 +21,7 @@ export const DSLEditor = () => {
             return;
         }
         try {
-            await registerDSL(dsl);
+            await registerDSL(mode, dsl);
             toast({
                 title: 'DSL Registered',
                 description: 'DSL has been registered successfully.',
@@ -31,8 +37,8 @@ export const DSLEditor = () => {
 
     const onClickReset = async () => {
         try {
-            await registerDefaultDSL();
-            setDSL(defaultDSL);
+            await registerDefaultDSL(mode);
+            setDSL(mode === 'master' ? defaultMasterDSL : defaultSlaveDSL);
             toast({
                 title: 'DSL Reset',
                 description: 'DSL has been reset to default.',
@@ -47,7 +53,7 @@ export const DSLEditor = () => {
     };
 
     useEffect(() => {
-        fetchInitialDSL().then((dsl) => setDSL(JSON.stringify(dsl, null, 4)));
+        fetchInitialDSL(mode).then((dsl) => setDSL(JSON.stringify(dsl, null, 4)));
     }, []);
 
     return (
@@ -69,11 +75,8 @@ export const DSLEditor = () => {
     );
 };
 
-const fetchInitialDSL = async () => {
-    if (!process.env.NEXT_PUBLIC_API_URL) {
-        throw new Error('API URL is not defined');
-    }
-    const url = new URL('v1/dsl', process.env.NEXT_PUBLIC_API_URL);
+const fetchInitialDSL = async (mode: OpenVEMode) => {
+    const url = new URL('v1/dsl', getAPIURL(mode));
     const response = await fetch(url.toString());
     if (!response.ok) {
         return '';
@@ -81,11 +84,8 @@ const fetchInitialDSL = async () => {
     return response.json();
 };
 
-const registerDSL = async (dsl: string) => {
-    if (!process.env.NEXT_PUBLIC_API_URL) {
-        throw new Error('API URL is not defined');
-    }
-    const url = new URL('v1/dsl', process.env.NEXT_PUBLIC_API_URL);
+const registerDSL = async (mode: OpenVEMode, dsl: string) => {
+    const url = new URL('v1/dsl', getAPIURL(mode));
     const response = await fetch(url.toString(), {
         method: 'POST',
         body: dsl,
@@ -98,27 +98,46 @@ const registerDSL = async (dsl: string) => {
     return response.json();
 };
 
-const registerDefaultDSL = async () => {
-    await registerDSL(defaultDSL);
+const registerDefaultDSL = async (mode: OpenVEMode) => {
+    if (mode === 'master') {
+        return await registerDSL(mode, defaultMasterDSL);
+    } else {
+        return await registerDSL(mode, defaultSlaveDSL);
+    }
 };
 
-const defaultDSL = JSON.stringify(
+const defaultMasterDSL = JSON.stringify(
     {
         validations: [
             {
                 id: 'user',
-                cels: ['age >= 20', 'size(name) < 20', 'size(picture) < 360'],
+                cels: ['size(name) < 20'],
                 variables: [
                     {
                         name: 'name',
                         type: 'string',
                     },
+                ],
+            },
+        ],
+    },
+    null,
+    4,
+);
+
+const defaultSlaveDSL = JSON.stringify(
+    {
+        validations: [
+            {
+                id: 'item',
+                cels: ['price > 0', 'size(image) < 360'],
+                variables: [
                     {
-                        name: 'age',
+                        name: 'price',
                         type: 'int',
                     },
                     {
-                        name: 'picture',
+                        name: 'image',
                         type: 'bytes',
                     },
                 ],

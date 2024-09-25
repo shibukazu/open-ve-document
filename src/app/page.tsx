@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { FaGithub } from 'react-icons/fa';
 
 import {
@@ -9,7 +11,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import Link from 'next/link';
 
 export default function Home() {
     return (

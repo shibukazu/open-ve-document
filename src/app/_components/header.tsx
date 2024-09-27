@@ -12,7 +12,7 @@ import {
 
 export const Header = () => {
     return (
-        <header className='bg-primary flex justify-between items-center w-screen h-12 py-8'>
+        <header className='bg-primary flex justify-between items-center w-screen h-12 py-8 pr-2'>
             <Link href='/' className='w-full'>
                 <div className='flex flex-justify-start items-center gap-2 ml-2'>
                     <TypographyH3 className='text-primary-foreground'>Open-VE</TypographyH3>
@@ -54,7 +54,7 @@ export const Header = () => {
             <div className='md:hidden'>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant='outline'>Open</Button>
+                        <Button variant='outline'>Menu</Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className='flex flex-col justify-center items-center'>
                         <Button variant='link'>

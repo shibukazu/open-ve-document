@@ -16,8 +16,8 @@ export const Header = () => {
             <Link href='/' className='w-full'>
                 <div className='flex flex-justify-start items-center gap-2 ml-2'>
                     <TypographyH3 className='text-primary-foreground'>Open-VE</TypographyH3>
-                    <div className='hidden md:block gap-2'>
-                        <div className='flex flex-justify-start items-center'>
+                    <div className='hidden md:block'>
+                        <div className='flex flex-justify-start items-center gap-2'>
                             <TypographyH3 className='hidden md:block text-primary-foreground'>
                                 |
                             </TypographyH3>

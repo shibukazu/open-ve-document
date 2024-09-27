@@ -13,7 +13,7 @@ type Props = {
 export const Playground = ({ mode }: Props) => {
     const [response, setResponse] = useState<ValidationResponse | undefined>(undefined);
     return (
-        <div className='grid grid-rows-2 md:grid-cols-2 h-full w-full'>
+        <div className='grid grid-rows-2 md:grid-rows-1 md:grid-cols-2 h-full w-full'>
             <div className='flex justify-start items-start flex-col p-2 md:border-r-2'>
                 <DSLEditor mode={mode} />
             </div>
